@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invitación Cena Romántica</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Georgia', serif;
+      background: linear-gradient(to right, #2c3e50, #4ca1af);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .card {
+      background: rgba(0, 0, 0, 0.75);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255, 192, 203, 0.5);
+      animation: fadeIn 1.5s ease-in-out;
+      max-width: 90%;
+      transition: opacity 1s ease-in-out;
+    }
+
+    h1 {
+      font-size: 1.8em;
+      margin-bottom: 10px;
+      color: #ffb6c1;
+    }
+
+    p {
+      font-size: 1em;
+      margin: 8px 0;
+    }
+
+    .button {
+      background: #ff4d6d;
+      border: none;
+      color: white;
+      padding: 12px 25px;
+      margin-top: 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: transform 0.3s, background 0.3s;
+      display: inline-block;
+    }
+
+    .button:hover {
+      transform: scale(1.1);
+      background: #e63950;
+    }
+
+    .hearts {
+      position: fixed;
+      top: -10px;
+      font-size: 20px;
+      animation: fall 6s linear infinite;
+    }
+
+    #respuesta {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #ffd1dc;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: scale(0.9);}
+      to {opacity: 1; transform: scale(1);}
+    }
+
+    @keyframes fall {
+      0% {transform: translateY(0);}
+      100% {transform: translateY(100vh);}
+    }
+
+    /* Imagen final */
+    .foto-final {
+      display: none;
+      max-width: 90%;
+      max-height: 90vh;
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(255,255,255,0.6);
+      animation: fadeIn 2s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <!-- Tarjeta de invitación -->
+  <div class="card" id="invitacion">
+    <h1>💖 Cena Romántica 💖</h1>
+    <p>Con todo mi amor te invito a una</p>
+    <p><strong>cena romántica de cumpleaños</strong></p>
+    <p>📅 Fecha: 10 de septiembre<br>
+       🕖 Hora: 7:00 PM<br>
+       📍 Lugar: Nuestro rincón especial</p>
+    <button class="button" onclick="confirmar()">Confirmar asistencia</button>
+    <p id="respuesta"></p>
+  </div>
+
+  <!-- Imagen que aparece después -->
+  <img src="foto.jpg" alt="Foto romántica" class="foto-final" id="fotoFinal">
+
+  <!-- Música de fondo -->
+  <audio id="musica" loop>
+    <source src="musica.mp3" type="audio/mpeg">
+    Tu navegador no soporta audio.
+  </audio>
+
+  <script>
+    // Corazones animados
+    function crearCorazon() {
+      const corazon = document.createElement("div");
+      corazon.innerText = "❤️";
+      corazon.classList.add("hearts");
+      corazon.style.left = Math.random() * window.innerWidth + "px";
+      corazon.style.fontSize = Math.random() * 20 + 15 + "px";
+      document.body.appendChild(corazon);
+      setTimeout(() => corazon.remove(), 6000);
+    }
+    setInterval(crearCorazon, 800);
+
+    // Función de confirmación
+    function confirmar() {
+      document.getElementById("respuesta").innerText = "¡Gracias mi amor! 💕 Me haces muy feliz.";
+      const musica = document.getElementById("musica");
+      musica.play();
+
+      // Después de 5 segundos mostrar foto
+      setTimeout(() => {
+        document.getElementById("invitacion").style.display = "none";
+        document.getElementById("fotoFinal").style.display = "block";
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
