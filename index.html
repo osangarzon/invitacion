@@ -17,6 +17,7 @@
       height: 100vh;
       text-align: center;
       overflow: hidden;
+      transition: background 2s ease-in-out;
     }
 
     .card {
@@ -58,13 +59,6 @@
       background: #e63950;
     }
 
-    .hearts {
-      position: fixed;
-      top: -10px;
-      font-size: 20px;
-      animation: fall 6s linear infinite;
-    }
-
     #respuesta {
       margin-top: 15px;
       font-weight: bold;
@@ -76,37 +70,98 @@
       to {opacity: 1; transform: scale(1);}
     }
 
-    @keyframes fall {
-      0% {transform: translateY(0);}
-      100% {transform: translateY(100vh);}
+    /* Cuenta regresiva */
+    #contador {
+      font-size: 3em;
+      color: #ffb6c1;
+      display: none;
+      animation: fadeIn 1s ease-in-out;
     }
 
-    /* Imagen final */
+    /* Galería de fotos */
     .foto-final {
       display: none;
-      max-width: 90%;
-      max-height: 90vh;
+      max-width: 80%;
+      max-height: 80vh;
       border-radius: 20px;
       box-shadow: 0 0 25px rgba(255,255,255,0.6);
       animation: fadeIn 2s ease-in-out;
+    }
+
+    /* --- Fuegos artificiales: puntos grandes --- */
+    .firework-dot {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #ff4d6d;
+      border-radius: 50%;
+      animation: explodeDot 1.2s ease-out forwards;
+    }
+
+    @keyframes explodeDot {
+      from { transform: scale(1); opacity: 1; }
+      to { transform: scale(15); opacity: 0; }
+    }
+
+    /* --- Fuegos artificiales: chispas de colores --- */
+    .firework {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: transparent;
+      border-radius: 50%;
+      animation: explode 1.5s ease-out forwards;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: particle-move 1.5s ease-out forwards;
+    }
+
+    @keyframes explode {
+      from { transform: scale(0.2); opacity: 1; }
+      to { transform: scale(1); opacity: 0; }
+    }
+
+    @keyframes particle-move {
+      from { transform: translate(0,0) scale(1); opacity: 1; }
+      to { transform: translate(var(--x), var(--y)) scale(0.5); opacity: 0; }
+    }
+
+    /* Poema */
+    #poema {
+      display: none;
+      font-size: 1.2em;
+      margin-top: 20px;
+      color: #ffd1dc;
+      white-space: pre-line;
     }
   </style>
 </head>
 <body>
   <!-- Tarjeta de invitación -->
   <div class="card" id="invitacion">
-    <h1>💖 Cena Romántica 💖</h1>
-    <p>Con todo mi amor te invito a una</p>
-    <p><strong>cena romántica de cumpleaños</strong></p>
-    <p>📅 Fecha: 10 de septiembre<br>
-       🕖 Hora: 7:00 PM<br>
-       📍 Lugar: Nuestro rincón especial</p>
+    <h1>💖 Cena de cumpleaños 💖</h1>
+    <p id="texto"></p>
+    <p>📅 Fecha: 09 de septiembre<br>
+       🕖 Hora: 6:30 PM<br>
+       📍 Lugar recogida: Tu casa</p>
     <button class="button" onclick="confirmar()">Confirmar asistencia</button>
     <p id="respuesta"></p>
   </div>
 
-  <!-- Imagen que aparece después -->
-  <img src="foto.jpg" alt="Foto romántica" class="foto-final" id="fotoFinal">
+  <!-- Contador -->
+  <div id="contador"></div>
+
+  <!-- Galería de fotos -->
+  <img src="foto1.jpg" alt="Foto romántica" class="foto-final" id="fotoFinal">
+
+  <!-- Poema -->
+  <p id="poema"></p>
 
   <!-- Música de fondo -->
   <audio id="musica" loop>
@@ -115,29 +170,139 @@
   </audio>
 
   <script>
-    // Corazones animados
-    function crearCorazon() {
-      const corazon = document.createElement("div");
-      corazon.innerText = "❤️";
-      corazon.classList.add("hearts");
-      corazon.style.left = Math.random() * window.innerWidth + "px";
-      corazon.style.fontSize = Math.random() * 20 + 15 + "px";
-      document.body.appendChild(corazon);
-      setTimeout(() => corazon.remove(), 6000);
+    // --- Efecto máquina de escribir con frase larga ---
+    const mensaje = "Hoy celebro tu vida y la suerte de tenerte a mi lado. Quiero invitarte a una cena romántica de cumpleaños, donde el amor será nuestro mejor brindis.";
+    let i = 0;
+    function escribirTexto() {
+      if (i < mensaje.length) {
+        document.getElementById("texto").innerHTML += mensaje.charAt(i);
+        i++;
+        setTimeout(escribirTexto, 60);
+      }
     }
-    setInterval(crearCorazon, 800);
+    escribirTexto();
 
-    // Función de confirmación
+    // --- Confirmación ---
     function confirmar() {
       document.getElementById("respuesta").innerText = "¡Gracias mi amor! 💕 Me haces muy feliz.";
       const musica = document.getElementById("musica");
       musica.play();
 
-      // Después de 5 segundos mostrar foto
-      setTimeout(() => {
-        document.getElementById("invitacion").style.display = "none";
-        document.getElementById("fotoFinal").style.display = "block";
-      }, 5000);
+      // Ocultar invitación y mostrar contador
+      document.getElementById("invitacion").style.display = "none";
+      const contador = document.getElementById("contador");
+      contador.style.display = "block";
+
+      let tiempo = 5;
+      contador.innerText = tiempo;
+
+      const interval = setInterval(() => {
+        tiempo--;
+        contador.innerText = tiempo;
+
+        // Cambiar fondo en cada número
+        document.body.style.background = 
+          tiempo % 2 === 0 ? "linear-gradient(to right, #000000, #434343)" 
+                           : "linear-gradient(to right, #4a148c, #880e4f)";
+
+        if (tiempo === 0) {
+          clearInterval(interval);
+          contador.style.display = "none";
+          lanzarFuegos();
+          setTimeout(mostrarGaleria, 2500); // mostrar fotos tras los fuegos
+        }
+      }, 1000);
+    }
+
+    // --- Lanzar fuegos artificiales ---
+    function lanzarFuegos() {
+      for (let i = 0; i < 5; i++) { 
+        setTimeout(() => {
+          const x = Math.random() * window.innerWidth;
+          const y = Math.random() * window.innerHeight * 0.7;
+          crearFuegoDot(x, y);   // puntos grandes
+          crearFuego(x, y);      // chispas coloridas
+        }, i * 600);
+      }
+    }
+
+    // --- Fuegos artificiales: puntos grandes ---
+    function crearFuegoDot(x, y) {
+      const fireworkDot = document.createElement("div");
+      fireworkDot.className = "firework-dot";
+      fireworkDot.style.left = x + "px";
+      fireworkDot.style.top = y + "px";
+      document.body.appendChild(fireworkDot);
+
+      setTimeout(() => fireworkDot.remove(), 1200);
+    }
+
+    // --- Fuegos artificiales: chispas coloridas ---
+    function crearFuego(x, y) {
+      const colores = ["#ff4d6d", "#ffcc00", "#00c3ff", "#9b59b6", "#00ff99"];
+      const firework = document.createElement("div");
+      firework.className = "firework";
+      firework.style.left = x + "px";
+      firework.style.top = y + "px";
+      document.body.appendChild(firework);
+
+      for (let i = 0; i < 25; i++) {
+        const particle = document.createElement("div");
+        particle.className = "particle";
+        particle.style.background = colores[Math.floor(Math.random() * colores.length)];
+
+        const angle = Math.random() * 2 * Math.PI;
+        const radius = 80 + Math.random() * 40;
+        const xMove = Math.cos(angle) * radius + "px";
+        const yMove = Math.sin(angle) * radius + "px";
+
+        particle.style.setProperty("--x", xMove);
+        particle.style.setProperty("--y", yMove);
+
+        firework.appendChild(particle);
+
+        setTimeout(() => particle.remove(), 1500);
+      }
+
+      setTimeout(() => firework.remove(), 1500);
+    }
+
+    // --- Galería de fotos automática ---
+    const fotos = ["foto1.jpg", "foto2.jpg", "foto3.jpg", "foto4.jpg", "foto5.jpg", "foto6.jpg", "foto7.jpg"];
+    let index = 0;
+
+    function mostrarGaleria() {
+      const foto = document.getElementById("fotoFinal");
+      foto.style.display = "block";
+      foto.src = fotos[index];
+
+      const galeria = setInterval(() => {
+        index++;
+        if (index < fotos.length) {
+          foto.src = fotos[index];
+        } else {
+          clearInterval(galeria);
+          foto.style.display = "none";
+          mostrarPoema();
+        }
+      }, 4000);
+    }
+
+    // --- Poema final (dedicatoria) ---
+    const poemaTexto = "Hola, mi solecito ☀️💛\n\nHoy celebramos un año más de tu vida y quiero festejarlo contigo, porque deseo que este día se convierta en uno de los muchos momentos especiales que compartiremos.\nDoy gracias por tenerte en mi vida y por todo lo que significas para mí. Hoy es la ocasión perfecta para recordarte lo especial que eres y lo mucho que mereces todas las cosas maravillosas que la vida tiene para darte.\n\nGracias por ser mi todo.\nTe amo 🤝";
+    let j = 0;
+
+    function mostrarPoema() {
+      const poema = document.getElementById("poema");
+      poema.style.display = "block";
+      function escribirPoema() {
+        if (j < poemaTexto.length) {
+          poema.innerHTML += poemaTexto.charAt(j);
+          j++;
+          setTimeout(escribirPoema, 70);
+        }
+      }
+      escribirPoema();
     }
   </script>
 </body>
